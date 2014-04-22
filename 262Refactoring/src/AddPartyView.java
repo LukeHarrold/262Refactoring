@@ -32,7 +32,6 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 
 import java.util.*;
-import java.text.*;
 
 /**
  * Constructor for GUI used to Add Parties to the waiting party queue.
@@ -47,7 +46,6 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 	private JButton addPatron, newPatron, remPatron, finished;
 	private JList partyList, allBowlers;
 	private Vector party, bowlerdb;
-	private Integer lock;
 
 	private ControlDeskView controlDesk;
 
@@ -79,7 +77,6 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		partyList.setVisibleRowCount(5);
 		partyList.addListSelectionListener(this);
 		JScrollPane partyPane = new JScrollPane(partyList);
-		//        partyPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		partyPanel.add(partyPane);
 
 		// Bowler Database

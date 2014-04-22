@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.event.*;
 
 import java.util.*;
 
@@ -67,7 +66,6 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		assignPanel.setLayout(new FlowLayout());
 		assign.addActionListener(this);
 		assignPanel.add(assign);
-//		controlsPanel.add(assignPanel);
 
 		finished = new JButton("Finished");
 		JPanel finishedPanel = new JPanel();
@@ -109,7 +107,6 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		partyPane.setVerticalScrollBarPolicy(
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		partyPanel.add(partyPane);
-		//		partyPanel.add(partyList);
 
 		// Clean up main panel
 		colPanel.add(controlsPanel, "East");

@@ -9,14 +9,12 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
 
 public class LaneStatusView implements ActionListener, LaneObserver, PinsetterObserver {
 
 	private JPanel jp;
 
-	private JLabel curBowler, foul, pinsDown;
+	private JLabel curBowler, pinsDown;
 	private JButton viewLane;
 	private JButton viewPinSetter, maintenance;
 
@@ -48,8 +46,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		jp.setLayout(new FlowLayout());
 		JLabel cLabel = new JLabel( "Now Bowling: " );
 		curBowler = new JLabel( "(no one)" );
-		JLabel fLabel = new JLabel( "Foul: " );
-		foul = new JLabel( " " );
 		JLabel pdLabel = new JLabel( "Pins Down: " );
 		pinsDown = new JLabel( "0" );
 
@@ -88,8 +84,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 		jp.add( cLabel );
 		jp.add( curBowler );
-//		jp.add( fLabel );
-//		jp.add( foul );
 		jp.add( pdLabel );
 		jp.add( pinsDown );
 		
@@ -148,8 +142,6 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 	public void receivePinsetterEvent(PinsetterEvent pe) {
 		pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
-//		foul.setText( ( new Boolean(pe.isFoulCommited()) ).toString() );
-		
 	}
 
 }

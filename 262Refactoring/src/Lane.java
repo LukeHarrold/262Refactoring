@@ -242,7 +242,6 @@ public class Lane extends Thread implements PinsetterObserver {
 				
 				System.out.println("result was: " + result);
 				
-				// TODO: send record of scores to control desk
 				if (result == 1) {					// yes, want to play again
 					resetScores();
 					resetBowlerIterator();
@@ -308,25 +307,20 @@ public class Lane extends Thread implements PinsetterObserver {
 				
 					if ((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && tenthFrameStrike == false)) {
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					}
 				
 					if (pe.getThrowNumber() == 3) {
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					}
 				} else { // its not the 10th frame
 			
 					if (pe.pinsDownOnThisThrow() == 10) {		// threw a strike
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					} else if (pe.getThrowNumber() == 2) {
 						canThrowAgain = false;
-						//publish( lanePublish() );
 					} else if (pe.getThrowNumber() == 3)  
 						System.out.println("I'm here...");
 				}
-			} else {								//  this is not a real throw, probably a reset
 			}
 	}
 	

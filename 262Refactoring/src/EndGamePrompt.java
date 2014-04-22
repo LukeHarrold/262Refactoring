@@ -9,11 +9,6 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
-
-import java.util.*;
-import java.text.*;
 
 public class EndGamePrompt implements ActionListener {
 
@@ -21,8 +16,6 @@ public class EndGamePrompt implements ActionListener {
 	private JButton yesButton, noButton;
 
 	private int result;
-
-	private String selectedNick, selectedMember;
 
 	public EndGamePrompt( String partyName ) {
 
