@@ -131,6 +131,7 @@
  * 
  */
 
+import java.util.Calendar;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -214,8 +215,8 @@ public class Lane extends Thread implements PinsetterObserver {
 					if (frameNumber == 9){
 						finalScores[bowlIndex][gameNumber] = cumulScores[bowlIndex][9];
 						try{
-						Date date = new Date();
-						String dateString = "" + date.getHours() + ":" + date.getMinutes() + " " + date.getMonth() + "/" + date.getDay() + "/" + (date.getYear() + 1900);
+						Calendar date = Calendar.getInstance();
+						String dateString = "" + date.get(Calendar.HOUR_OF_DAY) + ":" + date.get(Calendar.MINUTE) + " " + date.get(Calendar.MONTH) + "/" + date.get(Calendar.DAY_OF_MONTH) + "/" + date.get(Calendar.YEAR);
 						ScoreHistoryFile.addScore(currentThrower.getNick(), dateString, new Integer(cumulScores[bowlIndex][9]).toString());
 						} catch (Exception e) {System.err.println("Exception in addScore. "+ e );} 
 					}
