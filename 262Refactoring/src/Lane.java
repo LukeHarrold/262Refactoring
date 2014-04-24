@@ -135,19 +135,18 @@ import java.util.Calendar;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.Date;
 
 public class Lane extends Thread implements PinsetterObserver {	
 	private Party party;
 	private Pinsetter setter;
-	private HashMap scores;
-	private Vector subscribers;
+	private HashMap<Bowler, int[]> scores;
+	private Vector<LaneObserver> subscribers;
 
 	private boolean gameIsHalted;
 
 	private boolean partyAssigned;
 	private boolean gameFinished;
-	private Iterator bowlerIterator;
+	private Iterator<Bowler> bowlerIterator;
 	private int ball;
 	private int bowlIndex;
 	private int frameNumber;
@@ -171,8 +170,8 @@ public class Lane extends Thread implements PinsetterObserver {
 	 */
 	public Lane() { 
 		setter = new Pinsetter();
-		scores = new HashMap();
-		subscribers = new Vector();
+		scores = new HashMap<Bowler, int[]>();
+		subscribers = new Vector<LaneObserver>();
 
 		gameIsHalted = false;
 		partyAssigned = false;
@@ -202,7 +201,7 @@ public class Lane extends Thread implements PinsetterObserver {
 
 
 				if (bowlerIterator.hasNext()) {
-					currentThrower = (Bowler)bowlerIterator.next();
+					currentThrower = bowlerIterator.next();
 
 					canThrowAgain = true;
 					tenthFrameStrike = false;
@@ -235,7 +234,7 @@ public class Lane extends Thread implements PinsetterObserver {
 					}
 				}
 			} else if (partyAssigned && gameFinished) {
-				EndGamePrompt egp = new EndGamePrompt( ((Bowler) party.getMembers().get(0)).getNickName() + "'s Party" );
+				EndGamePrompt egp = new EndGamePrompt( party.getMembers().get(0).getNickName() + "'s Party" );
 				int result = egp.getResult();
 				egp.distroy();
 				egp = null;
@@ -248,11 +247,11 @@ public class Lane extends Thread implements PinsetterObserver {
 					resetBowlerIterator();
 					
 				} else if (result == 2) {// no, dont want to play another game
-					Vector printVector;	
-					EndGameReport egr = new EndGameReport( ((Bowler)party.getMembers().get(0)).getNickName() + "'s Party", party);
+					Vector<String> printVector;	
+					EndGameReport egr = new EndGameReport( (party.getMembers().get(0)).getNickName() + "'s Party", party);
 					printVector = egr.getResult();
 					partyAssigned = false;
-					Iterator scoreIt = party.getMembers().iterator();
+					Iterator<Bowler> scoreIt = party.getMembers().iterator();
 					party = null;
 					partyAssigned = false;
 					
@@ -260,12 +259,12 @@ public class Lane extends Thread implements PinsetterObserver {
 					
 					int myIndex = 0;
 					while (scoreIt.hasNext()){
-						Bowler thisBowler = (Bowler)scoreIt.next();
+						Bowler thisBowler = scoreIt.next();
 						ScoreReport sr = new ScoreReport( thisBowler, finalScores[myIndex++], gameNumber );
 						sr.sendEmail(thisBowler.getEmail());
-						Iterator printIt = printVector.iterator();
+						Iterator<String> printIt = printVector.iterator();
 						while (printIt.hasNext()){
-							if (thisBowler.getNick() == (String)printIt.next()){
+							if (thisBowler.getNick() == printIt.next()){
 								System.out.println("Printing " + thisBowler.getNick());
 								sr.sendPrintout();
 							}
@@ -344,7 +343,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @post scoring system is initialized
 	 */
 	private void resetScores() {
-		Iterator bowlIt = (party.getMembers()).iterator();
+		Iterator<Bowler> bowlIt = (party.getMembers()).iterator();
 
 		while ( bowlIt.hasNext() ) {
 			int[] toPut = new int[25];
@@ -395,7 +394,7 @@ public class Lane extends Thread implements PinsetterObserver {
 		int[] curScore;
 		int index =  ( (frame - 1) * 2 + ball);
 
-		curScore = (int[]) scores.get(Cur);
+		curScore = scores.get(Cur);
 
 	
 		curScore[ index - 1] = score;
@@ -428,7 +427,7 @@ public class Lane extends Thread implements PinsetterObserver {
 		int[] curScore;
 		int strikeballs = 0;
 		int totalScore = 0;
-		curScore = (int[]) scores.get(Cur);
+		curScore = scores.get(Cur);
 		for (int i = 0; i != 10; i++){
 			cumulScores[bowlIndex][i] = 0;
 		}
@@ -579,10 +578,10 @@ public class Lane extends Thread implements PinsetterObserver {
 
 	public void publish( LaneEvent event ) {
 		if( subscribers.size() > 0 ) {
-			Iterator eventIterator = subscribers.iterator();
+			Iterator<LaneObserver> eventIterator = subscribers.iterator();
 			
 			while ( eventIterator.hasNext() ) {
-				( (LaneObserver) eventIterator.next()).receiveLaneEvent( event );
+				eventIterator.next().receiveLaneEvent( event );
 			}
 		}
 	}

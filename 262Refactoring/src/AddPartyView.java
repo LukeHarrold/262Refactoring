@@ -45,7 +45,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 	private JFrame win;
 	private JButton addPatron, newPatron, remPatron, finished;
 	private JList partyList, allBowlers;
-	private Vector party, bowlerdb;
+	private Vector<String> party, bowlerdb;
 
 	private ControlDeskView controlDesk;
 
@@ -148,7 +148,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 		win.setLocation(
 			((screenSize.width) / 2) - ((win.getSize().width) / 2),
 			((screenSize.height) / 2) - ((win.getSize().height) / 2));
-		win.show();
+		win.setVisible(true);
 
 	}
 
@@ -176,7 +176,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
 			if ( party != null && party.size() > 0) {
 				controlDesk.updateAddParty( this );
 			}
-			win.hide();
+			win.setVisible(false);
 		}
 
 	}
@@ -235,7 +235,7 @@ public class AddPartyView implements ActionListener, ListSelectionListener {
  * Accessor for Party
  */
 
-	public Vector getParty() {
+	public Vector<String> getParty() {
 		return party;
 	}
 

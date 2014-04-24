@@ -20,7 +20,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 	private JButton printButton, finished;
 	private JList memberList;
 	private Vector myVector;
-	private Vector retVal;
+	private Vector<String> retVal;
 
 	private int result;
 
@@ -29,7 +29,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 	public EndGameReport( String partyName, Party party ) {
 	
 		result =0;
-		retVal = new Vector();
+		retVal = new Vector<String>();
 		win = new JFrame("End Game Report for " + partyName + "?" );
 		win.getContentPane().setLayout(new BorderLayout());
 		((JPanel) win.getContentPane()).setOpaque(false);
@@ -112,7 +112,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 			((String) ((JList) e.getSource()).getSelectedValue());
 	}
 
-	public Vector getResult() {
+	public Vector<String> getResult() {
 		while ( result == 0 ) {
 			try {
 				Thread.sleep(10);
@@ -128,7 +128,7 @@ public class EndGameReport implements ActionListener, ListSelectionListener {
 	}
 
 	public static void main( String args[] ) {
-		Vector bowlers = new Vector();
+		Vector<Bowler> bowlers = new Vector<Bowler>();
 		for ( int i=0; i<4; i++ ) {
 			bowlers.add( new Bowler( "aaaaa", "aaaaa", "aaaaa" ) );
 		}

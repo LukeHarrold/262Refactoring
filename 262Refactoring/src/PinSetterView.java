@@ -21,7 +21,7 @@ import java.util.Vector;
 public class PinSetterView implements PinsetterObserver {
 
 
-    private Vector pinVect = new Vector ( );
+    private Vector<JLabel> pinVect = new Vector<JLabel> ( );
     private JPanel firstRoll;
     private JPanel secondRoll;
 
