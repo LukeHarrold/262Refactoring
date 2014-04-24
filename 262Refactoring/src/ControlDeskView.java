@@ -97,7 +97,7 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 		partyPanel.setLayout(new FlowLayout());
 		partyPanel.setBorder(new TitledBorder("Party Queue"));
 
-		Vector empty = new Vector();
+		Vector<String> empty = new Vector<String>();
 		empty.add("(Empty)");
 
 		partyList = new JList(empty);
@@ -172,6 +172,6 @@ public class ControlDeskView implements ActionListener, ControlDeskObserver {
 	 */
 
 	public void receiveControlDeskEvent(ControlDeskEvent ce) {
-		partyList.setListData(((Vector) ce.getPartyQueue()));
+		partyList.setListData((ce.getPartyQueue()));
 	}
 }
