@@ -16,7 +16,7 @@
  *     Adding Party, Lane, Bowler, and Alley.
  *
  */
-
+import java.util.*;
 /**
  *  Class that holds all bowler info
  *
@@ -27,6 +27,7 @@ public class Bowler {
     private String fullName;
     private String nickName;
     private String email;
+    private ArrayList<ArrayList<String>> scores;
 
     public Bowler( String nick, String full, String mail ) {
 	nickName = nick;
@@ -53,17 +54,20 @@ public class Bowler {
 		return email;	
 	}
 	
+	public void recordScore(String score, String time){
+		
+	}
+	
 	public boolean equals ( Bowler b) {
-		boolean retval = true;
 		if ( !(nickName.equals(b.getNickName())) ) {
-				retval = false;
+				return false;
 		}
-		if ( !(fullName.equals(b.getFullName())) ) {
-				retval = false;
+		else if ( !(fullName.equals(b.getFullName())) ) {
+				return false;
 		}	
-		if ( !(email.equals(b.getEmail())) ) {
-				retval = false;
+		else if ( !(email.equals(b.getEmail())) ) {
+				return false;
 		}
-		return retval;
+		return true;
 	}
 }

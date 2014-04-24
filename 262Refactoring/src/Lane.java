@@ -137,7 +137,7 @@ import java.util.Iterator;
 import java.util.HashMap;
 
 public class Lane extends Thread implements PinsetterObserver {	
-	private Party party;
+	private Vector<Bowler> party;
 	private Pinsetter setter;
 	private HashMap<Bowler, int[]> scores;
 	private Vector<LaneObserver> subscribers;
@@ -234,7 +234,7 @@ public class Lane extends Thread implements PinsetterObserver {
 					}
 				}
 			} else if (partyAssigned && gameFinished) {
-				EndGamePrompt egp = new EndGamePrompt( party.getMembers().get(0).getNickName() + "'s Party" );
+				EndGamePrompt egp = new EndGamePrompt( party.get(0).getNickName() + "'s Party" );
 				int result = egp.getResult();
 				egp.distroy();
 				egp = null;
@@ -248,10 +248,10 @@ public class Lane extends Thread implements PinsetterObserver {
 					
 				} else if (result == 2) {// no, dont want to play another game
 					Vector<String> printVector;	
-					EndGameReport egr = new EndGameReport( (party.getMembers().get(0)).getNickName() + "'s Party", party);
+					EndGameReport egr = new EndGameReport( (party.get(0)).getNickName() + "'s Party", party);
 					printVector = egr.getResult();
 					partyAssigned = false;
-					Iterator<Bowler> scoreIt = party.getMembers().iterator();
+					Iterator<Bowler> scoreIt = party.iterator();
 					party = null;
 					partyAssigned = false;
 					
@@ -332,7 +332,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @post the iterator points to the first bowler in the party
 	 */
 	private void resetBowlerIterator() {
-		bowlerIterator = (party.getMembers()).iterator();
+		bowlerIterator = party.iterator();
 	}
 
 	/** resetScores()
@@ -343,7 +343,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @post scoring system is initialized
 	 */
 	private void resetScores() {
-		Iterator<Bowler> bowlIt = (party.getMembers()).iterator();
+		Iterator<Bowler> bowlIt = party.iterator();
 
 		while ( bowlIt.hasNext() ) {
 			int[] toPut = new int[25];
@@ -368,14 +368,14 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * 
 	 * @param theParty		Party to be assigned
 	 */
-	public void assignParty( Party theParty ) {
+	public void assignParty( Vector<Bowler> theParty ) {
 		party = theParty;
 		resetBowlerIterator();
 		partyAssigned = true;
 		
-		curScores = new int[party.getMembers().size()];
-		cumulScores = new int[party.getMembers().size()][10];
-		finalScores = new int[party.getMembers().size()][128]; //Hardcoding a max of 128 games, bite me.
+		curScores = new int[party.size()];
+		cumulScores = new int[party.size()][10];
+		finalScores = new int[party.size()][128]; //Hardcoding a max of 128 games, bite me.
 		gameNumber = 0;
 		
 		resetScores();
