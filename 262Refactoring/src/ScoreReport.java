@@ -9,7 +9,6 @@ import java.io.*;
 import java.util.Vector;
 import java.util.Iterator;
 import java.net.*;
-import java.awt.*;
 import java.awt.print.*;
 
 public class ScoreReport {
@@ -19,12 +18,12 @@ public class ScoreReport {
 	public ScoreReport( Bowler bowler, int[] scores, int games ) {
 		String nick = bowler.getNick();
 		String full = bowler.getFullName();
-		Vector v = null;
+		Vector<Score> v = null;
 		try{
 			v = ScoreHistoryFile.getScores(nick);
 		} catch (Exception e){System.err.println("Error: " + e);}
 		
-		Iterator scoreIt = v.iterator();
+		Iterator<Score> scoreIt = v.iterator();
 		
 		content = "";
 		content += "--Lucky Strike Bowling Alley Score Report--\n";
@@ -41,7 +40,7 @@ public class ScoreReport {
 		content += "\n";
 		content += "Previous scores by date: \n";
 		while (scoreIt.hasNext()){
-			Score score = (Score) scoreIt.next();
+			Score score = scoreIt.next();
 			content += "  " + score.getDate() + " - " +  score.getScore();
 			content += "\n";
 		}
