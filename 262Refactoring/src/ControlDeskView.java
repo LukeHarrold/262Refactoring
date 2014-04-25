@@ -20,7 +20,7 @@ import javax.swing.border.*;
 
 import java.util.*;
 
-public class ControlDeskView implements ActionListener, ControlDeskObserver {
+public class ControlDeskView implements ActionListener {
 
 	private JButton addParty, finished, assign;
 	private JFrame win;
