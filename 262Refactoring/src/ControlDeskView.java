@@ -171,7 +171,7 @@ public class ControlDeskView implements ActionListener {
 	 *
 	 */
 
-	public void receiveControlDeskEvent(ControlDeskEvent ce) {
-		partyList.setListData((ce.getPartyQueue()));
+	public void receivePartyQueue(Vector<String> partyQueue) {
+		partyList.setListData(partyQueue);
 	}
 }

@@ -137,7 +137,7 @@ class ControlDesk extends Thread {
 				curLane.assignParty(( partyQueue.pop()));
 			}
 		}
-		publish(new ControlDeskEvent(getPartyQueue()));
+		publish(getPartyQueue());
 	}
 
     /**
@@ -154,7 +154,7 @@ class ControlDesk extends Thread {
 			partyBowlers.add(newBowler);
 		}
 		partyQueue.add(partyBowlers);
-		publish(new ControlDeskEvent(getPartyQueue()));
+		publish(getPartyQueue());
 	}
 
     /**
@@ -204,10 +204,10 @@ class ControlDesk extends Thread {
      *
      */
 
-	public void publish(ControlDeskEvent event) {
+	public void publish(Vector<String> partyQueue) {
 		Iterator<ControlDeskView> eventIterator = subscribers.iterator();
 		while (eventIterator.hasNext()) {
-			eventIterator.next().receiveControlDeskEvent(event);
+			eventIterator.next().receivePartyQueue(partyQueue);
 		}
 	}
 
