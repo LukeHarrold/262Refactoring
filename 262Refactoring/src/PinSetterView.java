@@ -14,11 +14,15 @@
  */
 
 import java.awt.*;
+
 import javax.swing.*;
+
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Vector;
 
 
-public class PinSetterView implements PinsetterObserver {
+public class PinSetterView implements Observer {
 
 
     private Vector<JLabel> pinVect = new Vector<JLabel> ( );
@@ -183,26 +187,27 @@ public class PinSetterView implements PinsetterObserver {
      */
     
 
-    public void receivePinsetterEvent(PinsetterEvent pe){
-	if ( !(pe.isFoulCommited()) ) {
-	    	JLabel tempPin = new JLabel ( );
-	    	for ( int c = 0; c < 10; c++ ) {
-				boolean pin = pe.pinKnockedDown ( c );
-				tempPin = (JLabel)pinVect.get ( c );
-				if ( pin ) {
-		    		tempPin.setForeground ( Color.lightGray );
-				}
+    public void update(Observable obs, Object obj){
+    	Pinsetter pe = (Pinsetter) obs;
+		if ( !(pe.isFoulCommited()) ) {
+		    	JLabel tempPin = new JLabel ( );
+		    	for ( int c = 0; c < 10; c++ ) {
+					boolean pin = pe.pinKnockedDown ( c );
+					tempPin = (JLabel)pinVect.get ( c );
+					if ( pin ) {
+			    		tempPin.setForeground ( Color.lightGray );
+					}
+		    	}
 	    	}
-    	}
-		if ( pe.getThrowNumber() == 1 ) {
-	   		 secondRoll.setBackground ( Color.yellow );
+			if ( pe.getThrowNumber() == 1 ) {
+		   		 secondRoll.setBackground ( Color.yellow );
+			}
+		if ( pe.pinsDownOnThisThrow() == -1) {
+			for ( int i = 0; i != 10; i++){
+				((JLabel)pinVect.get(i)).setForeground(Color.black);
+			}
+			secondRoll.setBackground( Color.black);
 		}
-	if ( pe.pinsDownOnThisThrow() == -1) {
-		for ( int i = 0; i != 10; i++){
-			((JLabel)pinVect.get(i)).setForeground(Color.black);
-		}
-		secondRoll.setBackground( Color.black);
-	}
     }
     
     public void show() {

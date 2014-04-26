@@ -8,9 +8,12 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.*;
 
-public class LaneStatusView implements ActionListener, LaneObserver, PinsetterObserver {
+public class LaneStatusView implements ActionListener, Observer {
 
 	private JPanel jp;
 
@@ -36,10 +39,10 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 
 		psv = new PinSetterView( laneNum );
 		Pinsetter ps = lane.getPinsetter();
-		ps.subscribe(psv);
+		ps.addObserver(psv);
 
 		lv = new LaneView( lane, laneNum );
-		lane.subscribe(lv);
+		lane.addObserver(lv);
 
 
 		jp = new JPanel();
@@ -126,22 +129,24 @@ public class LaneStatusView implements ActionListener, LaneObserver, PinsetterOb
 		}
 	}
 
-	public void receiveLaneEvent(LaneEvent le) {
-		curBowler.setText( ( (Bowler)le.getBowler()).getNickName() );
-		if ( le.isMechanicalProblem() ) {
-			maintenance.setBackground( Color.RED );
-		}	
-		if ( lane.isPartyAssigned() == false ) {
-			viewLane.setEnabled( false );
-			viewPinSetter.setEnabled( false );
-		} else {
-			viewLane.setEnabled( true );
-			viewPinSetter.setEnabled( true );
+	public void update(Observable obs, Object obj) {
+		if (obs instanceof Lane) {
+			Lane le = (Lane) obs;
+			curBowler.setText( ( (Bowler)le.getBowler()).getNickName() );
+			if ( le.isMechanicalProblem() ) {
+				maintenance.setBackground( Color.RED );
+			}	
+			if ( lane.isPartyAssigned() == false ) {
+				viewLane.setEnabled( false );
+				viewPinSetter.setEnabled( false );
+			} else {
+				viewLane.setEnabled( true );
+				viewPinSetter.setEnabled( true );
+			}
+		} else if (obs instanceof Pinsetter) {
+			Pinsetter pe = (Pinsetter) obs;
+			pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
 		}
-	}
-
-	public void receivePinsetterEvent(PinsetterEvent pe) {
-		pinsDown.setText( ( new Integer(pe.totalPinsDown()) ).toString() );
 	}
 
 }
