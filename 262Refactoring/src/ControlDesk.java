@@ -136,6 +136,8 @@ class ControlDesk extends Thread {
 				System.out.println("ok... assigning this party");
 				curLane.assignParty(( partyQueue.pop()));
 			}
+			Thread currentLane = new Thread(curLane);
+			currentLane.start();
 		}
 		publish(getPartyQueue());
 	}

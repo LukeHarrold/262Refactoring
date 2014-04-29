@@ -138,8 +138,8 @@ import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
 
-public class Lane extends Observable implements Observer {
-	private Thread thread = new Thread();
+public class Lane extends Observable implements Observer, Runnable {
+
 	private Vector<Bowler> party;
 	private Pinsetter setter;
 	private HashMap<Bowler, int[]> scores;
@@ -180,8 +180,6 @@ public class Lane extends Observable implements Observer {
 		gameNumber = 0;
 
 		setter.addObserver( this );
-		
-		thread.start();
 	}
 
 	/** run()
@@ -196,7 +194,7 @@ public class Lane extends Observable implements Observer {
 			
 				while (gameIsHalted) {
 					try {
-						thread.sleep(10);
+						Thread.sleep(10);
 					} catch (Exception e) {}
 				}
 
@@ -277,7 +275,7 @@ public class Lane extends Observable implements Observer {
 			
 			
 			try {
-				thread.sleep(10);
+				Thread.sleep(10);
 			} catch (Exception e) {}
 		}
 	}
