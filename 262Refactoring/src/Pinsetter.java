@@ -72,9 +72,10 @@
 
 import java.util.*;
 
-public class Pinsetter extends Observable {
+public class Pinsetter {
 
 	private Random rnd;
+	private Vector<PinsetterObserver> subscribers;
 
 	private boolean[] pins; 
 			/* 0-9 of state of pine, true for standing, 
@@ -88,7 +89,6 @@ public class Pinsetter extends Observable {
 			*/
 	private boolean foul;
 	private int throwNumber;
-	private int pinsDown;
 
 	/** sendEvent()
 	 * 
@@ -98,9 +98,10 @@ public class Pinsetter extends Observable {
 	 * @post all subscribers have recieved pinsetter event with updated state
 	 * */
 	private void sendEvent(int jdpins) {	// send events when our state is changd
-		pinsDown = jdpins;
-		setChanged();
-		notifyObservers();
+		for (int i=0; i < subscribers.size(); i++) {
+			((PinsetterObserver)subscribers.get(i)).receivePinsetterEvent(
+				new PinsetterEvent(pins, foul, throwNumber, jdpins));
+		}
 	}
 
 	/** Pinsetter()
@@ -114,6 +115,7 @@ public class Pinsetter extends Observable {
 	public Pinsetter() {
 		pins = new boolean[10];
 		rnd = new Random();
+		subscribers = new Vector<PinsetterObserver>();
 		foul = false;
 		reset();
 	}
@@ -183,56 +185,17 @@ public class Pinsetter extends Observable {
 		for (int i=0; i <= 9; i++) {
 			pins[i] = true;
 		}
-	}
-	
-	/** pinKnockedDown()
-	 * 
-	 * check if a pin has been knocked down
-	 * 
-	 * @return true if pin [i] has been knocked down
-	 */
-	public boolean pinKnockedDown(int i) {
-		return !pins[i];
-	}
-	
-	/** pinsDownOnThisThrow()
-	 * 
-	 * @return the number of pins knocked down assosicated with this event
-	 */
-	public int pinsDownOnThisThrow() {
-		return pinsDown;
-	}
-	
-	/** totalPinsDown()
-	 * 
-	 * @return the total number of pins down for pinsetter that generated the event
-	 */
-	public int totalPinsDown() {
-		int count = 0;
-		
-		for (int i=0; i <= 9; i++) {
-			if (pinKnockedDown(i)) {
-				count++;
-			}
-		}
-		
-		return count;
-	}
-	
-	/** isFoulCommited()
-	 * 
-	 * @return true if a foul was commited on the lane, false otherwise
-	 */
-	public boolean isFoulCommited() {
-		return foul;
-	}
+	}		
 
-	/** getThrowNumber()
-	 *
-	 * @return current number of throws taken on this lane after last reset
+	/** subscribe()
+	 * 
+	 * subscribe objects to send events to
+	 * 
+	 * @pre none
+	 * @post the subscriber object will recieve events when their generated
 	 */
-	public int getThrowNumber() {
-		return throwNumber;
+	public void subscribe(PinsetterObserver subscriber) {
+		subscribers.add(subscriber);
 	}
 
 };

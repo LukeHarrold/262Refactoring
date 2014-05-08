@@ -8,7 +8,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 
-public class LaneView implements Observer, ActionListener {
+public class LaneView implements LaneObserver, ActionListener {
 
 	private boolean initDone = true;
 
@@ -120,8 +120,7 @@ public class LaneView implements Observer, ActionListener {
 		return panel;
 	}
 
-	public void update(Observable obs, Object obj) {
-		Lane le = (Lane) obs;
+	public void receiveLaneEvent(LaneEvent le) {
 		if (lane.isPartyAssigned()) {
 			int numBowlers = le.getParty().size();
 			while (!initDone) {

@@ -20,7 +20,7 @@ import javax.swing.border.*;
 
 import java.util.*;
 
-public class ControlDeskView implements ActionListener {
+public class ControlDeskView implements ActionListener, ControlDeskObserver {
 
 	private JButton addParty, finished, assign;
 	private JFrame win;
@@ -85,8 +85,8 @@ public class ControlDeskView implements ActionListener {
 		while (it.hasNext()) {
 			Lane curLane = it.next();
 			LaneStatusView laneStat = new LaneStatusView(curLane,(laneCount+1));
-			curLane.addObserver(laneStat);
-			curLane.getPinsetter().addObserver(laneStat);
+			curLane.subscribe(laneStat);
+			((Pinsetter)curLane.getPinsetter()).subscribe(laneStat);
 			JPanel lanePanel = laneStat.showLane();
 			lanePanel.setBorder(new TitledBorder("Lane" + ++laneCount ));
 			laneStatusPanel.add(lanePanel);
@@ -171,7 +171,7 @@ public class ControlDeskView implements ActionListener {
 	 *
 	 */
 
-	public void receivePartyQueue(Vector<String> partyQueue) {
-		partyList.setListData(partyQueue);
+	public void receiveControlDeskEvent(ControlDeskEvent ce) {
+		partyList.setListData((ce.getPartyQueue()));
 	}
 }

@@ -132,17 +132,15 @@
  */
 
 import java.util.Calendar;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.HashMap;
 
-public class Lane extends Observable implements Observer, Runnable {
-
+public class Lane extends Thread implements PinsetterObserver {	
 	private Vector<Bowler> party;
 	private Pinsetter setter;
 	private HashMap<Bowler, int[]> scores;
+	private Vector<LaneObserver> subscribers;
 
 	private boolean gameIsHalted;
 
@@ -173,13 +171,16 @@ public class Lane extends Observable implements Observer, Runnable {
 	public Lane() { 
 		setter = new Pinsetter();
 		scores = new HashMap<Bowler, int[]>();
+		subscribers = new Vector<LaneObserver>();
 
 		gameIsHalted = false;
 		partyAssigned = false;
 
 		gameNumber = 0;
 
-		setter.addObserver( this );
+		setter.subscribe( this );
+		
+		this.start();
 	}
 
 	/** run()
@@ -194,7 +195,7 @@ public class Lane extends Observable implements Observer, Runnable {
 			
 				while (gameIsHalted) {
 					try {
-						Thread.sleep(10);
+						sleep(10);
 					} catch (Exception e) {}
 				}
 
@@ -254,7 +255,7 @@ public class Lane extends Observable implements Observer, Runnable {
 					party = null;
 					partyAssigned = false;
 					
-					publish();
+					publish(lanePublish());
 					
 					int myIndex = 0;
 					while (scoreIt.hasNext()){
@@ -275,7 +276,7 @@ public class Lane extends Observable implements Observer, Runnable {
 			
 			
 			try {
-				Thread.sleep(10);
+				sleep(10);
 			} catch (Exception e) {}
 		}
 	}
@@ -289,39 +290,38 @@ public class Lane extends Observable implements Observer, Runnable {
 	 * 
 	 * @param pe 		The pinsetter event that has been received.
 	 */
-	public void update(Observable obs, Object obj) {
+	public void receivePinsetterEvent(PinsetterEvent pe) {
 		
-		Pinsetter pe = (Pinsetter) obs;
-		if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
-			markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow());
-
-			// next logic handles the ?: what conditions dont allow them another throw?
-			// handle the case of 10th frame first
-			if (frameNumber == 9) {
-				if (pe.totalPinsDown() == 10) {
-					setter.resetPins();
-					if(pe.getThrowNumber() == 1) {
-						tenthFrameStrike = true;
+			if (pe.pinsDownOnThisThrow() >=  0) {			// this is a real throw
+				markScore(currentThrower, frameNumber + 1, pe.getThrowNumber(), pe.pinsDownOnThisThrow());
+	
+				// next logic handles the ?: what conditions dont allow them another throw?
+				// handle the case of 10th frame first
+				if (frameNumber == 9) {
+					if (pe.totalPinsDown() == 10) {
+						setter.resetPins();
+						if(pe.getThrowNumber() == 1) {
+							tenthFrameStrike = true;
+						}
 					}
-				}
+				
+					if ((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && tenthFrameStrike == false)) {
+						canThrowAgain = false;
+					}
+				
+					if (pe.getThrowNumber() == 3) {
+						canThrowAgain = false;
+					}
+				} else { // its not the 10th frame
 			
-				if ((pe.totalPinsDown() != 10) && (pe.getThrowNumber() == 2 && tenthFrameStrike == false)) {
-					canThrowAgain = false;
+					if (pe.pinsDownOnThisThrow() == 10) {		// threw a strike
+						canThrowAgain = false;
+					} else if (pe.getThrowNumber() == 2) {
+						canThrowAgain = false;
+					} else if (pe.getThrowNumber() == 3)  
+						System.out.println("I'm here...");
 				}
-			
-				if (pe.getThrowNumber() == 3) {
-					canThrowAgain = false;
-				}
-			} else { // its not the 10th frame
-		
-				if (pe.pinsDownOnThisThrow() == 10) {		// threw a strike
-					canThrowAgain = false;
-				} else if (pe.getThrowNumber() == 2) {
-					canThrowAgain = false;
-				} else if (pe.getThrowNumber() == 3)  
-					System.out.println("I'm here...");
 			}
-		}
 	}
 	
 	/** resetBowlerIterator()
@@ -400,7 +400,18 @@ public class Lane extends Observable implements Observer, Runnable {
 		curScore[ index - 1] = score;
 		scores.put(Cur, curScore);
 		getScore( Cur, frame );
-		publish();
+		publish( lanePublish() );
+	}
+
+	/** lanePublish()
+	 *
+	 * Method that creates and returns a newly created laneEvent
+	 * 
+	 * @return		The new lane event
+	 */
+	private LaneEvent lanePublish(  ) {
+		LaneEvent laneEvent = new LaneEvent(party, bowlIndex, currentThrower, cumulScores, scores, frameNumber+1, curScores, ball, gameIsHalted);
+		return laneEvent;
 	}
 
 	/** getScore()
@@ -536,6 +547,28 @@ public class Lane extends Observable implements Observer, Runnable {
 		return gameFinished;
 	}
 
+	/** subscribe
+	 * 
+	 * Method that will add a subscriber
+	 * 
+	 * @param subscribe	Observer that is to be added
+	 */
+
+	public void subscribe( LaneObserver adding ) {
+		subscribers.add( adding );
+	}
+
+	/** unsubscribe
+	 * 
+	 * Method that unsubscribes an observer from this object
+	 * 
+	 * @param removing	The observer to be removed
+	 */
+	
+	public void unsubscribe( LaneObserver removing ) {
+		subscribers.remove( removing );
+	}
+
 	/** publish
 	 *
 	 * Method that publishes an event to subscribers
@@ -543,9 +576,14 @@ public class Lane extends Observable implements Observer, Runnable {
 	 * @param event	Event that is to be published
 	 */
 
-	public void publish() {
-		setChanged();
-		notifyObservers();
+	public void publish( LaneEvent event ) {
+		if( subscribers.size() > 0 ) {
+			Iterator<LaneObserver> eventIterator = subscribers.iterator();
+			
+			while ( eventIterator.hasNext() ) {
+				eventIterator.next().receiveLaneEvent( event );
+			}
+		}
 	}
 
 	/**
@@ -563,7 +601,7 @@ public class Lane extends Observable implements Observer, Runnable {
 	 */
 	public void pauseGame() {
 		gameIsHalted = true;
-		publish();
+		publish(lanePublish());
 	}
 	
 	/**
@@ -571,43 +609,7 @@ public class Lane extends Observable implements Observer, Runnable {
 	 */
 	public void unPauseGame() {
 		gameIsHalted = false;
-		publish();
+		publish(lanePublish());
 	}
 
-	public boolean isMechanicalProblem() {
-		return gameIsHalted;
-	}
-
-	public int getFrameNum() {
-		return frameNumber+1;
-	}
-
-	public HashMap<Bowler, int[]> getScore( ) {
-		return scores;
-	}
-
-
-	public int[] getCurScores(){ 
-		return curScores;
-	}
-
-	public int getIndex() {
-		return bowlIndex;
-	}
-
-	public int getBall( ) {
-		return ball;
-	}
-
-	public int[][] getCumulScore(){
-		return cumulScores;
-	}
-
-	public Vector<Bowler> getParty() {
-		return party;
-	}
-
-	public Bowler getBowler() {
-		return currentThrower;
-	}
 }
