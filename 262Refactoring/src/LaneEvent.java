@@ -29,7 +29,6 @@ import java.util.Vector;
 public class LaneEvent {
 
 	private Vector<Bowler> p;
-	int frame;
 	int ball;
 	Bowler bowler;
 	int[][] cumulScore;
@@ -39,16 +38,16 @@ public class LaneEvent {
 	int[] curScores;
 	boolean mechProb;
 	
-	public LaneEvent( Vector<Bowler> pty, int theIndex, Bowler theBowler, int[][] theCumulScore, HashMap<Bowler, int[]> theScore, int theFrameNum, int[] theCurScores, int theBall, boolean mechProblem) {
-		p = pty;
-		index = theIndex;
-		bowler = theBowler;
-		cumulScore = theCumulScore;
-		score = theScore;
-		curScores = theCurScores;
-		frameNum = theFrameNum;
-		ball = theBall;	
-		mechProb = mechProblem;
+	public LaneEvent(Lane lane) {
+		p = lane.getParty();
+		index = lane.getIndex();
+		bowler = lane.getBowler();
+		cumulScore = lane.getCumulScore();
+		score = lane.getScore();
+		curScores = lane.getCurScores();
+		frameNum = lane.getFrameNum();
+		ball = lane.getBall();	
+		mechProb = lane.isMechanicalProblem();
 	}
 	
 	public boolean isMechanicalProblem() {
@@ -70,10 +69,6 @@ public class LaneEvent {
 	
 	public int getIndex() {
 		return index;
-	}
-
-	public int getFrame( ) {
-		return frame;
 	}
 
 	public int getBall( ) {

@@ -410,7 +410,7 @@ public class Lane extends Thread implements PinsetterObserver {
 	 * @return		The new lane event
 	 */
 	private LaneEvent lanePublish(  ) {
-		LaneEvent laneEvent = new LaneEvent(party, bowlIndex, currentThrower, cumulScores, scores, frameNumber+1, curScores, ball, gameIsHalted);
+		LaneEvent laneEvent = new LaneEvent(this);
 		return laneEvent;
 	}
 
@@ -610,6 +610,43 @@ public class Lane extends Thread implements PinsetterObserver {
 	public void unPauseGame() {
 		gameIsHalted = false;
 		publish(lanePublish());
+	}
+	
+	public boolean isMechanicalProblem() {
+		return gameIsHalted;
+	}
+	
+	public int getFrameNum() {
+		return frameNumber+1;
+	}
+	
+	public HashMap<Bowler, int[]> getScore( ) {
+		return scores;
+	}
+
+
+	public int[] getCurScores(){ 
+		return curScores;
+	}
+	
+	public int getIndex() {
+		return bowlIndex;
+	}
+
+	public int getBall( ) {
+		return ball;
+	}
+	
+	public int[][] getCumulScore(){
+		return cumulScores;
+	}
+
+	public Vector<Bowler> getParty() {
+		return party;
+	}
+	
+	public Bowler getBowler() {
+		return currentThrower;
 	}
 
 }
